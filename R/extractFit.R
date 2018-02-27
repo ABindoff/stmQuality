@@ -1,6 +1,6 @@
 #' Extract topic quality statistics from a `manyTopics` fitted object
-#' 
-#' Allows customisable semantic coherence, exclusivity, and theta parameters and returns 
+#'
+#' Allows customisable semantic coherence, exclusivity, and theta parameters and returns
 #' an easy to work with data frame
 #' @param models A list returned by `stm::manyTopics`
 #' @param documents The documents to be modeled. Object must be a list of with each element corresponding to a document. Each document is represented as an integer matrix w\ ith two rows, and columns equal to the number of unique vocabulary words in the document. The first row contains the 1-indexed vocabulary entry and the sec\ ond row contains the number of times that term appears. Corpora can be imported using the reader function and manipulated using the prepDocuments.
@@ -17,7 +17,7 @@
 #'  data = out$meta, runs = 3, init.type = "Spectral", verbose = F)
 #'  k <- extractFit(fit, M = 20, n = 5)
 extractFit <- function(models, documents, M = 10, n = 20){
-  m <- lapply(models$out, function(model) extractFit0(model, documents = documents, M = M, w = w, n = n))
+  m <- lapply(models$out, function(model) extractFit0(model, documents = documents, M = M, n = n))
   n <- sapply(m, function(x) list(semcoh = x$semcoh,
                                   exclusivity = x$exclusivity,
                                   theta = x$theta,
@@ -38,7 +38,7 @@ extractFit <- function(models, documents, M = 10, n = 20){
 extractFit0 <- function(model, documents, M = 10, n = 20){
   semcoh <- stm:::semanticCoherence(model, documents = documents, M = M)
   exclusivity <- stm:::exclusivity(model, M = M)
-  thetas <- colMeans(as.data.frame(findThoughts0(model, n = n)$theta)) 
+  thetas <- colMeans(as.data.frame(findThoughts0(model, n = n)$theta))
   K <- rep(model$settings$dim$K, model$settings$dim$K)
   return(list(K = K, semcoh = semcoh, exclusivity = exclusivity, theta = thetas, topic = c(1:K[1L])))
 }
